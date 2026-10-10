@@ -536,7 +536,7 @@ async fn exec_command_post_tool_use_payload_uses_output_for_noninteractive_one_s
             tool_name: HookToolName::bash(),
             tool_use_id: "call-43".to_string(),
             tool_input: serde_json::json!({ "command": "echo three" }),
-            tool_response: serde_json::json!({"stdout":"three", "exit_code":0, "completed":true, "action_id": if output.event_call_id.is_empty() { invocation.call_id.clone() } else { output.event_call_id.clone() }, "duration_ms":498}),
+            tool_response: serde_json::json!({"stdout":"three", "exit_code":0, "completed":true, "action_id": "call-43", "duration_ms":498}),
         })
     );
 }
@@ -568,7 +568,7 @@ async fn exec_command_post_tool_use_payload_uses_output_for_interactive_completi
             tool_name: HookToolName::bash(),
             tool_use_id: "call-44".to_string(),
             tool_input: serde_json::json!({ "command": "echo three" }),
-            tool_response: serde_json::json!({"stdout":"three", "exit_code":0, "completed":true, "action_id": if output.event_call_id.is_empty() { invocation.call_id.clone() } else { output.event_call_id.clone() }, "duration_ms":498}),
+            tool_response: serde_json::json!({"stdout":"three", "exit_code":0, "completed":true, "action_id": "call-44", "duration_ms":498}),
         })
     );
 }
@@ -679,13 +679,13 @@ async fn write_stdin_post_tool_use_payload_keeps_parallel_session_metadata_separ
                 tool_name: HookToolName::bash(),
                 tool_use_id: "exec-call-b".to_string(),
                 tool_input: serde_json::json!({ "command": "sleep 1; echo beta" }),
-                tool_response: serde_json::json!("beta\n"),
+                tool_response: serde_json::json!({"stdout":"beta\n", "exit_code":0, "completed":true, "action_id":"exec-call-b", "duration_ms":498}),
             }),
             Some(crate::tools::registry::PostToolUsePayload {
                 tool_name: HookToolName::bash(),
                 tool_use_id: "exec-call-a".to_string(),
                 tool_input: serde_json::json!({ "command": "sleep 2; echo alpha" }),
-                tool_response: serde_json::json!("alpha\n"),
+                tool_response: serde_json::json!({"stdout":"alpha\n", "exit_code":0, "completed":true, "action_id":"exec-call-a", "duration_ms":498}),
             }),
         ]
     );
