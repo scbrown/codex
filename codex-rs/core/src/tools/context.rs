@@ -435,7 +435,7 @@ impl ToolOutput for ExecCommandToolOutput {
             .map(|command| serde_json::json!({ "command": command }))
     }
 
-    fn post_tool_use_response(&self, _call_id: &str, _payload: &ToolPayload) -> Option<JsonValue> {
+    fn post_tool_use_response(&self, call_id: &str, _payload: &ToolPayload) -> Option<JsonValue> {
         if self.process_id.is_some() || self.hook_command.is_none() {
             return None;
         }
@@ -447,7 +447,7 @@ impl ToolOutput for ExecCommandToolOutput {
             "stdout": self.truncated_output_with_policy(self.model_output_policy()),
             "exit_code": self.exit_code,
             "completed": true,
-            "action_id": self.post_tool_use_id(_call_id),
+            "action_id": self.post_tool_use_id(call_id),
             "duration_ms": self.wall_time.as_millis(),
         }))
     }
