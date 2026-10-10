@@ -440,9 +440,16 @@ impl ToolOutput for ExecCommandToolOutput {
             return None;
         }
 
-        Some(JsonValue::String(
-            self.truncated_output_with_policy(self.model_output_policy()),
-        ))
+        // A post-tool event reports transport completion, not process success.
+        // Carry the typed status already used by code-mode results so hook
+        // consumers never have to infer success from stdout or the event name.
+        Some(serde_json::json!({
+            "stdout": self.truncated_output_with_policy(self.model_output_policy()),
+            "exit_code": self.exit_code,
+            "completed": true,
+            "action_id": self.post_tool_use_id(_call_id),
+            "duration_ms": self.wall_time.as_millis(),
+        }))
     }
 
     fn code_mode_result(&self, _payload: &ToolPayload) -> JsonValue {

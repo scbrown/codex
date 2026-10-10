@@ -554,3 +554,44 @@ fn exec_command_tool_output_preserves_omission_metadata_when_truncated() {
     assert!(text.contains("Warning: truncated output (original token count: 42000)"));
     assert_eq!(text.matches(&marker).count(), 1);
 }
+
+#[test]
+fn native_exec_hooks_preserve_typed_exit_status_and_original_correlation() {
+    let payload = ToolPayload::Function {
+        arguments: "{}".to_string(),
+    };
+    for code in [Some(0), Some(42), None] {
+        let mut output = ExecCommandToolOutput {
+            event_call_id: "exec-native-fixture".to_string(),
+            chunk_id: "fixture".to_string(),
+            wall_time: Duration::from_millis(12),
+            raw_output: b"output is not a status".to_vec(),
+            truncation_policy: TruncationPolicy::Bytes(1024),
+            max_output_tokens: None,
+            process_id: None,
+            exit_code: code,
+            original_token_count: None,
+            output_omitted_bytes: None,
+            hook_command: Some("controlled command".to_string()),
+        };
+        let result = output
+            .post_tool_use_response("poll-call", &payload)
+            .unwrap();
+        assert_eq!(result["exit_code"], json!(code));
+        assert_eq!(result["action_id"], json!("exec-native-fixture"));
+        assert_eq!(result["completed"], json!(true));
+        output.process_id = Some(7);
+        assert!(
+            output
+                .post_tool_use_response("poll-call", &payload)
+                .is_none()
+        );
+        output.process_id = None;
+        output.hook_command = None;
+        assert!(
+            output
+                .post_tool_use_response("poll-call", &payload)
+                .is_none()
+        );
+    }
+}

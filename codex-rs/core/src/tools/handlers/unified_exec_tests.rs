@@ -536,7 +536,7 @@ async fn exec_command_post_tool_use_payload_uses_output_for_noninteractive_one_s
             tool_name: HookToolName::bash(),
             tool_use_id: "call-43".to_string(),
             tool_input: serde_json::json!({ "command": "echo three" }),
-            tool_response: serde_json::json!("three"),
+            tool_response: serde_json::json!({"stdout":"three", "exit_code":0, "completed":true, "action_id": if output.event_call_id.is_empty() { invocation.call_id.clone() } else { output.event_call_id.clone() }, "duration_ms":498}),
         })
     );
 }
@@ -568,7 +568,7 @@ async fn exec_command_post_tool_use_payload_uses_output_for_interactive_completi
             tool_name: HookToolName::bash(),
             tool_use_id: "call-44".to_string(),
             tool_input: serde_json::json!({ "command": "echo three" }),
-            tool_response: serde_json::json!("three"),
+            tool_response: serde_json::json!({"stdout":"three", "exit_code":0, "completed":true, "action_id": if output.event_call_id.is_empty() { invocation.call_id.clone() } else { output.event_call_id.clone() }, "duration_ms":498}),
         })
     );
 }
@@ -627,7 +627,7 @@ async fn write_stdin_post_tool_use_payload_uses_original_exec_call_id_and_comman
             tool_name: HookToolName::bash(),
             tool_use_id: "exec-call-45".to_string(),
             tool_input: serde_json::json!({ "command": "sleep 1; echo finished" }),
-            tool_response: serde_json::json!("finished\n"),
+            tool_response: serde_json::json!({"stdout":"finished\n", "exit_code":0, "completed":true, "action_id":"exec-call-45", "duration_ms":498}),
         })
     );
 }
